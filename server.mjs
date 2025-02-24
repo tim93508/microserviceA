@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
 
 const Microuser = mongoose.model("Microuser", userSchema);
 
-// Generate test user.
+// Generate test user
 const createTestUser = async () => {
   try {
     // Find user by email and overwrite. Create if not found
