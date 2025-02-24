@@ -36,6 +36,28 @@ const createTestUser = async () => {
   }
 };
 
+// Search for user
+const findUser = async (email, password) => {
+  try {
+    // Find user by email
+    console.log("Attempting to find User in database...");
+
+    const user = await Microuser.findOne({ email });
+
+    if (!user) {
+      return { message: "No such email exists.", id: undefined };
+    }
+
+    if (user.password !== password) {
+      return { message: "Wrong password.", id: undefined };
+    }
+
+    return { message: "Login Successful", id: user._id };
+  } catch (err) {
+    return { message: err };
+  }
+};
+
 // Database connection
 mongoose.connect(process.env.MONGODB_CONNECT_STRING);
 
@@ -50,29 +72,26 @@ db.once("open", () => {
 app.use(express.json());
 
 // POST endpoint
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   // Get values of email and password
   const { email, password } = req.body;
 
   // Validate input
   if (!email || !password) {
-    return res.status(400).json({ Error: "Invalid Request" });
+    return res.status(400).json({ message: "Invalid Request", id: undefined });
+  } else {
+    console.log("Login information received.");
   }
 
-  // Find data
-  const user = users.find((x) => x.email === email && x.password === password);
+  // Check database for user credentials
+  const result = await findUser(email, password);
 
-  // Found user
-  if (user) {
-    return res
-      .status(201)
-      .json({ message: "Successfully Logged In", id: user.id });
+  // If findUser failed, return error result
+  if (result === undefined) {
+    return res.status(500).json({ message: "Error", id: undefined });
   }
 
-  // No user found
-  return res
-    .status(201)
-    .json({ message: "Invalid Credentials", id: undefined });
+  return res.status(201).json(result);
 });
 
 // Start the server
