@@ -1,0 +1,18 @@
+{
+
+  "scripts": {
+
+    "start": "nodemon controller.mjs"
+
+  },
+
+  "dependencies": {
+
+    "express": "^4.21.2",
+
+    "nodemon": "^3.1.9"
+
+  }
+
+}
+
