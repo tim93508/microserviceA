@@ -1,0 +1,55 @@
+
+
+
+### Request: Submit login information
+### Response
+### Status Code: 201
+### Body: JSON for the login with 2 properties
+POST http://localhost:3000/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "user@email.com",
+    "password": "test1234"
+}
+
+
+
+### Request 2: Invalid request for login
+### Response
+### Status Code: 400
+### Body: {"Error": "Invalid request"}
+POST http://localhost:3000/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "user@email.com",
+    "password": 
+}
+
+
+### Request 3: Invalid request for login
+### Response
+### Status Code: 400
+### Body: {"Error": "Invalid request"}
+POST http://localhost:3000/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": ,
+    "password": "test1234"
+}
+
+### Request 4: Invalid request for login
+### Response
+### Status Code: 400
+### Body: {"Error": "Invalid request"}
+POST http://localhost:3000/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": ,
+    "password": 
+}
+
+
