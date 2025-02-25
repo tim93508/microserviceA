@@ -1,7 +1,7 @@
 
 
 
-### Request: Submit login information
+### Request 1: Submit login information
 ### Response
 ### Status Code: 201
 ### Body: JSON for the login with 2 properties
@@ -18,38 +18,61 @@ content-type: application/json
 ### Request 2: Invalid request for login
 ### Response
 ### Status Code: 400
-### Body: {"Error": "Invalid request"}
+### Body: {"message": "Invalid request"}
 POST http://localhost:3000/login HTTP/1.1
 content-type: application/json
 
 {
     "email": "user@email.com",
-    "password": 
+    "password": ""
 }
 
 
 ### Request 3: Invalid request for login
 ### Response
 ### Status Code: 400
-### Body: {"Error": "Invalid request"}
+### Body: {"message": "Invalid request"}
 POST http://localhost:3000/login HTTP/1.1
 content-type: application/json
 
 {
-    "email": ,
+    "email": "" ,
     "password": "test1234"
 }
 
 ### Request 4: Invalid request for login
 ### Response
 ### Status Code: 400
-### Body: {"Error": "Invalid request"}
+### Body: {"message": "Invalid request"}
 POST http://localhost:3000/login HTTP/1.1
 content-type: application/json
 
 {
-    "email": ,
-    "password": 
+    "email": "" ,
+    "password": ""
+}
+
+### Request 5: Submit invalid email
+### Response
+### Status Code: 201
+### Body: {"message": "No such email exists."}
+POST http://localhost:3000/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "invalidemail@email.com",
+    "password": "test1234"
 }
 
 
+### Request 6: Submit invalid password
+### Response
+### Status Code: 201
+### Body: {"message": "Wrong password"}
+POST http://localhost:3000/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "user@email.com",
+    "password": "invalidPassword"
+}

@@ -2,13 +2,10 @@
 import express from "express";
 import mongoose from "mongoose";
 import "dotenv/config";
-import { clear } from "console";
 
 const app = express();
-const PORT = 3000;
-
-// TESTING data
-const testData = [{ email: "user@email.com", password: "test1234" }];
+const PORT = process.env.PORT || 3000;
+const test = process.env.TEST || false;
 
 // Define Mongoose schema and model
 const userSchema = new mongoose.Schema({
@@ -17,6 +14,9 @@ const userSchema = new mongoose.Schema({
 });
 
 const Microuser = mongoose.model("Microuser", userSchema);
+
+// TESTING data
+const testData = [{ email: "user@email.com", password: "test1234" }];
 
 // Generate test user
 const createTestUser = async () => {
@@ -54,7 +54,8 @@ const findUser = async (email, password) => {
 
     return { message: "Login Successful", id: user._id };
   } catch (err) {
-    return { message: err };
+    console.error("Error:", err);
+    return { message: err.message || "Unexpected Error." };
   }
 };
 
@@ -65,7 +66,9 @@ const db = mongoose.connection;
 
 db.once("open", () => {
   console.log("Connected to MongoDB using Mongoose.");
-  createTestUser();
+  if (test === true) {
+    createTestUser();
+  }
 });
 
 // JSON parsing middleware
@@ -73,25 +76,33 @@ app.use(express.json());
 
 // POST endpoint
 app.post("/login", async (req, res) => {
-  // Get values of email and password
-  const { email, password } = req.body;
+  try {
+    // Get values of email and password
+    const { email, password } = req.body;
 
-  // Validate input
-  if (!email || !password) {
-    return res.status(400).json({ message: "Invalid Request", id: undefined });
-  } else {
-    console.log("Login information received.");
+    // Validate input
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Invalid Request", id: undefined });
+    } else {
+      console.log("Login information received.");
+    }
+
+    // Check database for user credentials
+    const result = await findUser(email, password);
+
+    // Unauthorized
+    if (!result.id) {
+      return res.status(401).json(result);
+    }
+
+    // Authorized
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-
-  // Check database for user credentials
-  const result = await findUser(email, password);
-
-  // If findUser failed, return error result
-  if (result === undefined) {
-    return res.status(500).json({ message: "Error", id: undefined });
-  }
-
-  return res.status(201).json(result);
 });
 
 // Start the server
